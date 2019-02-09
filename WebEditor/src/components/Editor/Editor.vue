@@ -1,6 +1,9 @@
 <template>
   <div class="editor">
-    <LanguageSelector @language-selected="onLanguageSelected"/>
+    <div class="editor_menu">
+      <LanguageSelector @language-selected="onLanguageSelected"/>
+      <Actions/>
+    </div>
     <codemirror ref="cm" v-model="code" :options="cmOptions"></codemirror>
   </div>
 </template>
@@ -9,6 +12,7 @@
 import { mapGetters, mapActions } from "vuex";
 import { codemirror } from "vue-codemirror";
 import LanguageSelector from "./LanguageSelector.vue";
+import Actions from "./Actions.vue";
 
 // languages
 import "codemirror/mode/clike/clike.js";
@@ -23,7 +27,8 @@ export default {
   name: "Editor",
   components: {
     codemirror,
-    LanguageSelector
+    LanguageSelector,
+    Actions
   },
   data() {
     return {
@@ -65,10 +70,25 @@ export default {
 .CodeMirror {
   border: 1px solid #eee;
   height: auto;
+  margin: 6px 8px;
 }
+</style>
 
+<style scoped>
 .language-selector {
   width: 20%;
+  display: inline-block;
+}
+
+.editor_actions {
+  width: 75%;
+  display: inline-block;
+}
+
+.editor_menu {
   padding: 0.5% 0%;
+  display: flex;
+  align-items: center;
+  align-content: center;
 }
 </style>

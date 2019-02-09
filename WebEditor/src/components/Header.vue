@@ -1,11 +1,7 @@
 <template>
   <div class="header">
-    <md-toolbar md-elevation="0" class="md-transparent no-padding">
-      <div class="md-toolbar-row">
-        <img alt="TankFight" src="../assets/tank.png">
-        <h1>TankFight</h1>
-      </div>
-    </md-toolbar>
+    <img alt="TankFight" src="../assets/tank.png">
+    <h1>TankFight</h1>
   </div>
 </template>
 
@@ -17,11 +13,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+img,
 h1 {
-  margin: 0% 2%;
+  margin: 6px 8px;
 }
 
-.no-padding {
-  padding: 0%;
+.header {
+  display: flex;
+  align-items: center;
+  align-content: center;
 }
 </style>

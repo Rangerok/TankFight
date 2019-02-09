@@ -73,7 +73,9 @@ export const store = new Vuex.Store({
   },
   actions: {
     SET_LANGUAGE: (context, value) => {
-      context.commit("SET_LANGUAGE", value);
+      if (context.state.selectedLanguage != value) {
+        context.commit("SET_LANGUAGE", value);
+      }
     },
     SET_CODE: (context, value) => {
       context.commit("SET_CODE", value);

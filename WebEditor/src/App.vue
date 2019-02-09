@@ -1,36 +1,30 @@
 <template>
   <div id="app">
     <Header/>
-    <Editor/>
-    <Actions/>
+    <div class="content">
+      <router-view/>
+    </div>
   </div>
 </template>
 
 <script>
 import Header from "./components/Header.vue";
-import Editor from "./components/Editor.vue";
-import Actions from "./components/Actions.vue";
 
 export default {
   name: "app",
   components: {
-    Header,
-    Editor,
-    Actions
+    Header
   }
 };
 </script>
 <style>
+.content {
+  width: 100%;
+}
+
 #app {
   padding: 60px;
   height: auto;
   text-align: left;
-}
-
-.editor,
-.actions,
-.header {
-  width: 100%;
-  padding: 0.1% 2%;
 }
 </style>

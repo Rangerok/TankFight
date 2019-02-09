@@ -34,5 +34,6 @@ export default {
 .language-selector {
   font-size: larger;
   font-weight: bold;
+  margin: 6px 8px;
 }
 </style>
