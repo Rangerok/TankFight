@@ -13,10 +13,6 @@ namespace ImageService.Controllers
   [ApiController]
   public class CreateController : Controller
   {
-    //Не уверен, что пригодится, добавил для теста
-    private string Test =
-      "using System; using System.Linq; using System.IO; using System.Text; using System.Collections; using System.Collections.Generic; using System.Net.Http; public class Player{    static void Main(string[] args)    {        string inputs;        while (true)        {            inputs = Console.ReadLine();            if(!string.IsNullOrWhiteSpace(inputs))            {               Console.WriteLine(new { Type = new Random().Next(1), Direction = new Random().Next(3) });            }        }    }}";
-
     private readonly IImageCreator imageCreator;
     private readonly ILogger<CreateController> logger;
 
@@ -24,16 +20,16 @@ namespace ImageService.Controllers
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> Create(SupportedLanguages language, [FromBody] string code)
+    public async Task<IActionResult> Create([FromBody]CreateArgs args)
     {
-      if (string.IsNullOrWhiteSpace(code))
+      if (args == null)
       {
         return this.BadRequest();
       }
 
       try
       {
-        var imageTag = await imageCreator.CreateImage(language, Test);
+        var imageTag = await imageCreator.CreateImage(args.Language, args.Code);
 
         return this.Ok(new { Tag = imageTag });
       }

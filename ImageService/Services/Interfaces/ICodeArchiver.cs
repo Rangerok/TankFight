@@ -5,6 +5,6 @@ namespace ImageService.Services.Interfaces
 {
   public interface ICodeArchiver
   {
-    string CreateArchive(LanguageConfiguration configuration);
+    string CreateArchive(string solutionPath);
   }
 }

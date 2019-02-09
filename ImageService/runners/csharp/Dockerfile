@@ -1,17 +1,13 @@
-FROM microsoft/dotnet:2.1-runtime AS base
+FROM microsoft/dotnet:2.1-sdk as build
 WORKDIR /app
 
-FROM microsoft/dotnet:2.1-sdk AS build
-WORKDIR /src
-COPY TestCode.csproj .
-COPY . .
-WORKDIR /src
-RUN dotnet build TestCode.csproj -c Release -o /app
+COPY *.csproj ./
+RUN dotnet restore
 
-FROM build AS publish
-RUN dotnet publish TestCode.csproj -c Release -o /app
+COPY . ./
+RUN dotnet publish -c Release -o /app
 
-FROM base AS final
+FROM microsoft/dotnet:2.1-runtime as final
 WORKDIR /app
-COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "TestCode.dll"]
+COPY --from=build /app /app
+ENTRYPOINT ["dotnet", "Bot.dll"]

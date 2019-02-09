@@ -4,42 +4,38 @@ namespace ImageService.Models
 {
   public class LanguageConfiguration
   {
-    private static readonly string[] AnswerFileFormats = new[]
+    private static readonly string[] AnswerFileNames = new[]
     {
-      "", //Cpp
-      "", //Java
-      "", //JavaScript
-      "", //Python
-      "runners/csharp/Answer{0}.cs"  //Csharp
+      "main.go", //Go
+      "Program.cs",  //Csharp
+      "bot.py", //Python
+      "bot.js", //JavaScript
     };
 
-    private static readonly string[][] FilesConfigurations = new[]
+    private static readonly string[] Runners = new[]
     {
-      new string[] {"", ""}, //Cpp
-      new string[] {"", ""}, //Java
-      new string[] {"", ""}, //JavaScript
-      new string[] {"", ""}, //Python
-      new string[] { "runners/csharp/Dockerfile", "runners/csharp/TestCode.csproj" } //Csharp
+      "runners/go", //Go
+      "runners/csharp", //Csharp
+      "runners/python", //Python
+      "runners/javascript" //JavaScript
     };
 
-    public string BuildNumber { get; }
-    public string AnswerFile { get; }
-    public string[] OtherFiles { get; }
+    public string BuildId { get; }
+    public string AnswerFileName { get; }
+    public string RunnerPath { get; }
 
     public static LanguageConfiguration Build(SupportedLanguages language)
     {
-      var buildNumber = new Random().Next().ToString();
+      var buildId = Guid.NewGuid().ToString();
 
-      string answerFile = string.Format(AnswerFileFormats[(int) language], buildNumber);
-
-      return new LanguageConfiguration(answerFile, FilesConfigurations[(int) language], buildNumber);
+      return new LanguageConfiguration(AnswerFileNames[(int)language], Runners[(int) language], buildId);
     }
 
-    private LanguageConfiguration(string answerFile, string[] otherFiles, string buildNumber)
+    private LanguageConfiguration(string answerFileName, string runnerPath, string buildId)
     {
-      AnswerFile = answerFile;
-      OtherFiles = otherFiles;
-      BuildNumber = buildNumber;
+      AnswerFileName = answerFileName;
+      RunnerPath = runnerPath;
+      BuildId = buildId;
     }
   }
 }

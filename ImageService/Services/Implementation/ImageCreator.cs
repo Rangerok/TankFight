@@ -11,7 +11,7 @@ namespace ImageService.Services.Implementation
 {
   public class ImageCreator : IImageCreator
   {
-    private const string ImageTagFormat = "tankwars-test:{0}-{1}";
+    private const string ImageTagFormat = "tankfight:{0}-{1}";
 
     private readonly IDockerClient dockerClient;
     private readonly ICodeArchiver codeArchiver;
@@ -26,19 +26,24 @@ namespace ImageService.Services.Implementation
 
       var configuration = LanguageConfiguration.Build(language);
 
-      await this.codeSaver.Save(code, configuration.AnswerFile);
-      var archive = this.codeArchiver.CreateArchive(configuration);
+      var solutionPath = await this.codeSaver.Save(code, configuration);
+      var archive = this.codeArchiver.CreateArchive(solutionPath);
 
-      var imageTag = string.Format(ImageTagFormat, configuration.BuildNumber, language.ToString().ToLower());
+      var imageTag = string.Format(ImageTagFormat, configuration.BuildId, language.ToString().ToLower());
 
-      using (var archiveStream = File.OpenRead(archive))
+      try
       {
-        var stream = await this.dockerClient.Images.BuildImageFromDockerfileAsync(archiveStream, new ImageBuildParameters { Tags = new List<string> { imageTag } });
-        await this.ReadToEnd(stream);
+        using (var archiveStream = File.OpenRead(archive))
+        {
+          var stream = await this.dockerClient.Images.BuildImageFromDockerfileAsync(archiveStream, new ImageBuildParameters { Tags = new List<string> { imageTag } });
+          await this.ReadToEnd(stream);
+        }
       }
-
-      File.Delete(archive);
-      File.Delete(configuration.AnswerFile);
+      finally
+      {
+        File.Delete(archive);
+        Directory.Delete(solutionPath, true);
+      }
 
       var result = await this.dockerClient.Images.SearchImagesAsync(new ImagesSearchParameters { Term = imageTag });
 

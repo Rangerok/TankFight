@@ -1,13 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System.Runtime.Serialization;
 
 namespace ImageService.Models
 {
   public enum SupportedLanguages
   {
-    Cpp,
-    Java,
-    JavaScript,
+    [EnumMember(Value = "go")]
+    Go,
+
+    [EnumMember(Value = "csharp")]
+    Csharp,
+
+    [EnumMember(Value = "python")]
     Python,
-    Csharp
+
+    [EnumMember(Value = "javascript")]
+    JavaScript
   }
 }

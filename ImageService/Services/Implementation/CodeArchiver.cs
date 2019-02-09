@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
@@ -11,23 +12,22 @@ namespace ImageService.Services.Implementation
   {
     private const string TgzFilenameFormat = "{0}.tar.gz";
 
-    private readonly List<string> files = new List<string>();
-
-    public string CreateArchive(LanguageConfiguration configuration)
+    public string CreateArchive(string solutionPath)
     {
-      var tgzFilename = string.Format(TgzFilenameFormat, configuration.BuildNumber);
+      if (solutionPath == null)
+        throw new ArgumentNullException(nameof(solutionPath));
 
-      this.files.Clear();
-      this.files.Add(configuration.AnswerFile);
-      this.files.AddRange(configuration.OtherFiles);
+      var tgzFilename = string.Format(TgzFilenameFormat, Guid.NewGuid().ToString());
+
+      var files = Directory.GetFiles(solutionPath);
 
       using (var outStream = File.Create(tgzFilename))
       using (var gzoStream = new GZipOutputStream(outStream))
       using (var tarArchive = TarArchive.CreateOutputTarArchive(gzoStream))
       {
-        tarArchive.RootPath = Path.GetDirectoryName(configuration.AnswerFile);
+        tarArchive.RootPath = Path.GetDirectoryName(solutionPath);
 
-        foreach (var file in this.files)
+        foreach (var file in files)
         {
           var tarEntry = TarEntry.CreateEntryFromFile(file);
           tarEntry.Name = Path.GetFileName(file);

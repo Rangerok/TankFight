@@ -5,6 +5,6 @@ namespace ImageService.Services.Interfaces
 {
   public interface ICodeSaver
   {
-    Task Save(string code, string path);
+    Task<string> Save(string code, LanguageConfiguration configuration);
   }
 }

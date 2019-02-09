@@ -38,6 +38,9 @@ namespace ImageService
         .AddSingleton<ICodeArchiver, CodeArchiver>();
 
       services
+        .AddCors();
+
+      services
         .AddMvc()
         .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -55,6 +58,11 @@ namespace ImageService
       {
         app.UseDeveloperExceptionPage();
       }
+
+      app.UseCors(builder => builder
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod());
 
       // Enable middleware to serve generated Swagger as a JSON endpoint.
       app.UseSwagger();
