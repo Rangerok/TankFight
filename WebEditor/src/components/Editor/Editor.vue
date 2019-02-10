@@ -82,7 +82,6 @@ export default {
 
 .editor_actions {
   width: 75%;
-  display: inline-block;
 }
 
 .editor_menu {
