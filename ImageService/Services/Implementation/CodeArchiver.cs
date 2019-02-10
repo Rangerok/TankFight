@@ -12,12 +12,12 @@ namespace ImageService.Services.Implementation
   {
     private const string TgzFilenameFormat = "{0}.tar.gz";
 
-    public string CreateArchive(string solutionPath)
+    public string CreateArchive(string solutionPath, string buildId)
     {
       if (solutionPath == null)
         throw new ArgumentNullException(nameof(solutionPath));
 
-      var tgzFilename = string.Format(TgzFilenameFormat, Guid.NewGuid().ToString());
+      var tgzFilename = string.Format(TgzFilenameFormat, buildId);
 
       var files = Directory.GetFiles(solutionPath);
 

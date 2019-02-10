@@ -17,19 +17,18 @@ namespace ImageService.Services.Implementation
     private readonly ICodeArchiver codeArchiver;
     private readonly ICodeSaver codeSaver;
 
-    public async Task<string> CreateImage(SupportedLanguages language, string code)
+    public async Task<string> CreateImage(string language, string code)
     {
       if (string.IsNullOrWhiteSpace(code))
       {
         throw new ArgumentException("Код пользователя пустой.", nameof(code));
       }
 
-      var configuration = LanguageConfiguration.Build(language);
+      var buildId = Guid.NewGuid().ToString();
+      var solutionPath = await this.codeSaver.Save(code, language, buildId);
+      var archive = this.codeArchiver.CreateArchive(solutionPath, buildId);
 
-      var solutionPath = await this.codeSaver.Save(code, configuration);
-      var archive = this.codeArchiver.CreateArchive(solutionPath);
-
-      var imageTag = string.Format(ImageTagFormat, configuration.BuildId, language.ToString().ToLower());
+      var imageTag = string.Format(ImageTagFormat, buildId, language.ToString().ToLower());
 
       try
       {

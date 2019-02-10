@@ -2,9 +2,11 @@
 using System.Net;
 using System.Threading.Tasks;
 using ImageService.Models;
+using ImageService.Settings;
 using ImageService.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace ImageService.Controllers
 {
@@ -15,6 +17,7 @@ namespace ImageService.Controllers
   {
     private readonly IImageCreator imageCreator;
     private readonly ILogger<CreateController> logger;
+    private readonly RunnersSettings runnerSettings;
 
     [HttpPost]
     [ProducesResponseType(200)]
@@ -25,6 +28,11 @@ namespace ImageService.Controllers
       if (args == null)
       {
         return this.BadRequest();
+      }
+
+      if (!runnerSettings.SupportedLanguages.Contains(args.Language.ToLower()))
+      {
+        return this.StatusCode((int)HttpStatusCode.NotImplemented);
       }
 
       try
@@ -40,10 +48,11 @@ namespace ImageService.Controllers
       }
     }
 
-    public CreateController(IImageCreator imageCreator, ILogger<CreateController> logger)
+    public CreateController(IImageCreator imageCreator, ILogger<CreateController> logger, IOptions<RunnersSettings> settings)
     {
       this.imageCreator = imageCreator;
       this.logger = logger;
+      this.runnerSettings = settings.Value;
     }
   }
 }

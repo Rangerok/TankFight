@@ -4,43 +4,65 @@ using System.Text;
 using System.Threading.Tasks;
 using ImageService.Models;
 using ImageService.Services.Interfaces;
+using ImageService.Settings;
+using Microsoft.Extensions.Options;
 
 namespace ImageService.Services.Implementation
 {
   public class CodeSaver : ICodeSaver
   {
-    public async Task<string> Save(string code, LanguageConfiguration configuration)
+    private const string SolutionsFolderName = "solutions";
+    private const string RunnersFolderName = "runners";
+    private readonly RunnersSettings runnersSettings; 
+
+    public async Task<string> Save(string code, string language, string buildId)
     {
       if (string.IsNullOrWhiteSpace(code))
       {
         throw new ArgumentException("Код пользователя пустой.", nameof(code));
       }
 
-      if (configuration == null)
+      if (string.IsNullOrWhiteSpace(buildId))
       {
-        throw new ArgumentNullException(nameof(configuration));
+        throw new ArgumentException("Пустой buildId", nameof(buildId));
       }
 
-      var solutionPath = Path.Combine("bots", configuration.BuildId);
+      var solutionPath = Path.Combine(SolutionsFolderName, buildId);
       Directory.CreateDirectory(solutionPath);
 
-      var answerFile = Path.Combine(solutionPath, configuration.AnswerFileName);
+      await this.CreateAnswerFile(solutionPath, language, code);
+      this.CopyRunnerFiles(solutionPath, language);
+
+      return solutionPath;
+    }
+
+    private async Task CreateAnswerFile(string solutionPath, string language, string code)
+    {
+      var answerFileName = runnersSettings.AnswerFileNames[language];
+      var answerFile = Path.Combine(solutionPath, answerFileName);
       using (var fileStream = File.Create(answerFile))
       {
         var bytes = Encoding.UTF8.GetBytes(code);
 
         await fileStream.WriteAsync(bytes);
       }
+    }
 
-      var files = Directory.GetFiles(configuration.RunnerPath);
+    private void CopyRunnerFiles(string solutionPath, string language)
+    {
+      var runnerPath = Path.Combine(RunnersFolderName, language);
+      var files = Directory.GetFiles(runnerPath);
       foreach (var file in files)
       {
         var fileName = Path.GetFileName(file);
         var copyFile = Path.Combine(solutionPath, fileName);
         File.Copy(file, copyFile);
       }
+    }
 
-      return solutionPath;
+    public CodeSaver(IOptions<RunnersSettings> settings)
+    {
+      this.runnersSettings = settings.Value;
     }
   }
 }

@@ -5,6 +5,6 @@ namespace ImageService.Services.Interfaces
 {
   public interface ICodeArchiver
   {
-    string CreateArchive(string solutionPath);
+    string CreateArchive(string solutionPath, string buildId);
   }
 }
