@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.Runtime.InteropServices;
 
 namespace ImageService
 {
@@ -25,8 +26,11 @@ namespace ImageService
     // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
     public void ConfigureServices(IServiceCollection services)
     {
-      var dockerClient = new DockerClientConfiguration(new Uri(this.Configuration["Docker"]))
-        .CreateClient();
+      var dockerUrl = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+        ? new Uri("npipe://./pipe/docker_engine")
+        : new Uri("unix:/var/run/docker.sock");
+
+      var dockerClient = new DockerClientConfiguration(dockerUrl).CreateClient();
 
       services
         .Configure<RunnersSettings>(this.Configuration.GetSection("Runners"));
