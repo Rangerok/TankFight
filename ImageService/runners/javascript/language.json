@@ -1,0 +1,6 @@
+{
+  "id": "javascript",
+  "label": "JavaScript",
+  "answerFile": "bot.js",
+  "mode": "text/javascript"
+}

@@ -12,11 +12,9 @@ namespace ImageService.Services.Implementation
 {
   public class CodeSaver : ICodeSaver
   {
-    private const string SolutionsFolderName = "solutions";
-    private const string RunnersFolderName = "runners";
-    private readonly RunnersSettings runnersSettings; 
+    private readonly RunnersSettings runnersSettings;
 
-    public async Task<string> Save(string code, string language, string buildId)
+    public async Task<string> Save(string code, Language language, string buildId)
     {
       if (string.IsNullOrWhiteSpace(code))
       {
@@ -28,13 +26,13 @@ namespace ImageService.Services.Implementation
         throw new ArgumentException("Пустой buildId", nameof(buildId));
       }
 
-      var solutionPath = Path.Combine(SolutionsFolderName, buildId);
+      var solutionPath = Path.Combine(runnersSettings.SolutionsFolderName, buildId);
       Directory.CreateDirectory(solutionPath);
 
       try
       {
-        await this.CreateAnswerFile(solutionPath, language, code);
-        this.CopyRunnerFiles(solutionPath, language);
+        await this.CreateAnswerFile(solutionPath, language.AnswerFile, code);
+        this.CopyRunnerFiles(solutionPath, language.Id);
       }
       catch (Exception ex)
       {
@@ -44,9 +42,8 @@ namespace ImageService.Services.Implementation
       return solutionPath;
     }
 
-    private async Task CreateAnswerFile(string solutionPath, string language, string code)
+    private async Task CreateAnswerFile(string solutionPath, string answerFileName, string code)
     {
-      var answerFileName = runnersSettings.AnswerFileNames[language];
       var answerFile = Path.Combine(solutionPath, answerFileName);
       using (var fileStream = File.Create(answerFile))
       {
@@ -58,7 +55,7 @@ namespace ImageService.Services.Implementation
 
     private void CopyRunnerFiles(string solutionPath, string language)
     {
-      var runnerPath = Path.Combine(RunnersFolderName, language);
+      var runnerPath = Path.Combine(runnersSettings.RunnersFolderName, language, runnersSettings.BaseFilesFolderName);
       var files = Directory.GetFiles(runnerPath);
       foreach (var file in files)
       {

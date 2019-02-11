@@ -1,0 +1,6 @@
+{
+  "id": "go",
+  "label": "go",
+  "answerFile": "main.go",
+  "mode": "text/x-go"
+}

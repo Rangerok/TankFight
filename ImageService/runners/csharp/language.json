@@ -1,0 +1,6 @@
+{
+  "id": "csharp",
+  "label": "C#",
+  "answerFile": "Program.cs",
+  "mode": "text/x-csharp"
+}

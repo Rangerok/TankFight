@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
-
-namespace ImageService.Settings
+﻿namespace ImageService.Settings
 {
   public class RunnersSettings
   {
-    public List<string> SupportedLanguages { get; set; }
-    public Dictionary<string, string> AnswerFileNames { get; set; }
+    public string SolutionsFolderName { get; set; }
+    public string RunnersFolderName { get; set; }
+    public string BaseFilesFolderName { get; set; }
+    public string TemplateFile { get; set; }
+    public string LanguageFile { get; set; }
   }
 }

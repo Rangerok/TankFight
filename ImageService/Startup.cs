@@ -37,6 +37,7 @@ namespace ImageService
 
       services
         .AddSingleton<IDockerClient>(dockerClient)
+        .AddSingleton<ILanguageReader, LanguageReader>()
         .AddSingleton<IImageCreator, ImageCreator>()
         .AddSingleton<ICodeSaver, CodeSaver>()
         .AddSingleton<ICodeArchiver, CodeArchiver>();

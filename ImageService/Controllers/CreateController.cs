@@ -16,8 +16,8 @@ namespace ImageService.Controllers
   public class CreateController : Controller
   {
     private readonly IImageCreator imageCreator;
+    private readonly ILanguageReader languageReader;
     private readonly ILogger<CreateController> logger;
-    private readonly RunnersSettings runnerSettings;
 
     [HttpPost]
     [ProducesResponseType(200)]
@@ -29,15 +29,18 @@ namespace ImageService.Controllers
       {
         return this.BadRequest();
       }
-
-      if (!runnerSettings.SupportedLanguages.Contains(args.Language.ToLower()))
-      {
-        return this.StatusCode((int)HttpStatusCode.NotImplemented);
-      }
-
+     
       try
       {
-        var imageTag = await imageCreator.CreateImage(args.Language, args.Code);
+        var language = this.languageReader.Read(args.Language);
+
+        if (language == null)
+        {
+          this.logger.LogWarning("Запрос с неизвестным языком.");
+          return BadRequest();
+        }
+
+        var imageTag = await imageCreator.CreateImage(language, args.Code);
 
         return this.Ok(new { Tag = imageTag });
       }
@@ -48,11 +51,13 @@ namespace ImageService.Controllers
       }
     }
 
-    public CreateController(IImageCreator imageCreator, ILogger<CreateController> logger, IOptions<RunnersSettings> settings)
+    public CreateController(IImageCreator imageCreator, 
+      ILanguageReader languageReader, 
+      ILogger<CreateController> logger)
     {
       this.imageCreator = imageCreator;
       this.logger = logger;
-      this.runnerSettings = settings.Value;
+      this.languageReader = languageReader;
     }
   }
 }
