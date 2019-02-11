@@ -10,12 +10,19 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import Header from "./components/Header.vue";
 
 export default {
   name: "app",
   components: {
     Header
+  },
+  methods: {
+    ...mapActions(["GET_LANGUAGES"])
+  },
+  mounted() {
+    this.GET_LANGUAGES();
   }
 };
 </script>

@@ -1,48 +1,13 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import {
-  goTemplate,
-  csharpTemplate,
-  jsTemplate,
-  pythonTemplate
-} from "./templates";
+import axios from "axios";
 
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
   state: {
-    languages: [
-      {
-        id: "go",
-        label: "go",
-        template: goTemplate,
-        mode: "text/x-go"
-      },
-      {
-        id: "csharp",
-        label: "С#",
-        template: csharpTemplate,
-        mode: "text/x-csharp"
-      },
-      {
-        id: "python",
-        label: "python",
-        template: pythonTemplate,
-        mode: "text/x-python"
-      },
-      {
-        id: "javascript",
-        label: "JavaScript",
-        template: jsTemplate,
-        mode: "text/javascript"
-      }
-    ],
-    selectedLanguage: {
-      id: "javascript",
-      label: "JavaScript",
-      template: jsTemplate,
-      mode: "text/javascript"
-    },
+    languages: [],
+    selectedLanguage: {},
     code: null
   },
   getters: {
@@ -63,6 +28,10 @@ export const store = new Vuex.Store({
     }
   },
   mutations: {
+    SET_LANGUAGES: (state, value) => {
+      state.languages = value;
+      state.selectedLanguage = value[0];
+    },
     SET_LANGUAGE: (state, value) => {
       state.selectedLanguage = value;
       state.code = value.template;
@@ -72,6 +41,11 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
+    GET_LANGUAGES: context => {
+      axios.get("/api/language").then(response => {
+        context.commit("SET_LANGUAGES", response.data);
+      });
+    },
     SET_LANGUAGE: (context, value) => {
       if (context.state.selectedLanguage != value) {
         context.commit("SET_LANGUAGE", value);
