@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using ImageService.Exceptions;
 using ImageService.Models;
 using ImageService.Services.Interfaces;
 using ImageService.Settings;
@@ -30,8 +31,15 @@ namespace ImageService.Services.Implementation
       var solutionPath = Path.Combine(SolutionsFolderName, buildId);
       Directory.CreateDirectory(solutionPath);
 
-      await this.CreateAnswerFile(solutionPath, language, code);
-      this.CopyRunnerFiles(solutionPath, language);
+      try
+      {
+        await this.CreateAnswerFile(solutionPath, language, code);
+        this.CopyRunnerFiles(solutionPath, language);
+      }
+      catch (Exception ex)
+      {
+        throw new CodeNotSavedException($"Не удалось сохранить код для языка {language}", ex);
+      }
 
       return solutionPath;
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
+using ImageService.Exceptions;
 using ImageService.Models;
 using ImageService.Services.Interfaces;
 
@@ -19,21 +20,28 @@ namespace ImageService.Services.Implementation
 
       var tgzFilename = string.Format(TgzFilenameFormat, buildId);
 
-      var files = Directory.GetFiles(solutionPath);
-
-      using (var outStream = File.Create(tgzFilename))
-      using (var gzoStream = new GZipOutputStream(outStream))
-      using (var tarArchive = TarArchive.CreateOutputTarArchive(gzoStream))
+      try
       {
-        tarArchive.RootPath = Path.GetDirectoryName(solutionPath);
+        var files = Directory.GetFiles(solutionPath);
 
-        foreach (var file in files)
+        using (var outStream = File.Create(tgzFilename))
+        using (var gzoStream = new GZipOutputStream(outStream))
+        using (var tarArchive = TarArchive.CreateOutputTarArchive(gzoStream))
         {
-          var tarEntry = TarEntry.CreateEntryFromFile(file);
-          tarEntry.Name = Path.GetFileName(file);
+          tarArchive.RootPath = Path.GetDirectoryName(solutionPath);
 
-          tarArchive.WriteEntry(tarEntry, true);
+          foreach (var file in files)
+          {
+            var tarEntry = TarEntry.CreateEntryFromFile(file);
+            tarEntry.Name = Path.GetFileName(file);
+
+            tarArchive.WriteEntry(tarEntry, true);
+          }
         }
+      }
+      catch (Exception ex)
+      {
+        throw new CodeNotAchivedException($"Не удалось создать архив для {solutionPath}", ex);
       }
 
       return tgzFilename;
