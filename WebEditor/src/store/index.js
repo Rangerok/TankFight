@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import axios from "axios";
 
 Vue.use(Vuex);
 
@@ -41,10 +40,8 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
-    GET_LANGUAGES: context => {
-      axios.get("/api/language").then(response => {
-        context.commit("SET_LANGUAGES", response.data);
-      });
+    SET_LANGUAGES: (context, value) => {
+      context.commit("SET_LANGUAGES", value);
     },
     SET_LANGUAGE: (context, value) => {
       if (context.state.selectedLanguage != value) {

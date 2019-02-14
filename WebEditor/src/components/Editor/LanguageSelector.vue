@@ -32,8 +32,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .language-selector {
+  width: 100%;
   font-size: larger;
   font-weight: bold;
-  margin: 6px 8px;
 }
 </style>

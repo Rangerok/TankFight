@@ -1,16 +1,29 @@
 <template>
   <div class="editor">
-    <div class="editor_menu">
-      <LanguageSelector @language-selected="onLanguageSelected"/>
-      <Actions/>
+    <div v-if="loading" class="editor_loading">
+      <h2>Загрузка...
+        <md-progress-spinner :md-diameter="15" :md-stroke="2" md-mode="indeterminate"></md-progress-spinner>
+      </h2>
     </div>
-    <codemirror ref="cm" v-model="code" :options="cmOptions"></codemirror>
+    <div v-if="error" class="editor_error">
+      <h2>{{ error }}</h2>
+    </div>
+    <div v-if="code" class="editor_content content">
+      <div class="editor_menu menu">
+        <LanguageSelector @language-selected="onLanguageSelected"/>
+        <Actions/>
+      </div>
+      <div class="main">
+        <codemirror ref="cm" v-model="code" :options="cmOptions"></codemirror>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { codemirror } from "vue-codemirror";
+import axios from "axios";
 import LanguageSelector from "./LanguageSelector.vue";
 import Actions from "./Actions.vue";
 
@@ -32,6 +45,8 @@ export default {
   },
   data() {
     return {
+      loading: false,
+      error: null,
       cmOptions: {
         autoCloseBrackets: true,
         lineWrapping: true,
@@ -60,7 +75,23 @@ export default {
     onLanguageSelected() {
       this.$refs.cm.codemirror.setOption("mode", this.MODE);
     },
-    ...mapActions(["SET_CODE"])
+    ...mapActions(["SET_CODE", "SET_LANGUAGES"])
+  },
+  mounted() {
+    if (!this.code) {
+      this.loading = true;
+      axios
+        .get("/api/language")
+        .then(response => {
+          this.SET_LANGUAGES(response.data);
+        })
+        .catch(() => {
+          this.error = "Не удалось соединиться с сервером";
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    }
   }
 };
 </script>
@@ -70,24 +101,9 @@ export default {
 .CodeMirror {
   border: 1px solid #eee;
   height: auto;
-  margin: 6px 8px;
+  text-align: left;
 }
 </style>
 
 <style scoped>
-.language-selector {
-  width: 20%;
-  display: inline-block;
-}
-
-.editor_actions {
-  width: 75%;
-}
-
-.editor_menu {
-  padding: 0.5% 0%;
-  display: flex;
-  align-items: center;
-  align-content: center;
-}
 </style>

@@ -1,9 +1,11 @@
 <template>
-  <div class="battle-viewer">
-    <div class="battle-viewer_menu">
+  <div class="battle-viewer content">
+    <div class="battle-viewer_menu menu">
       <Actions/>
     </div>
-    <iframe :src="battleUrl" scrolling="no"></iframe>
+    <div class="main">
+      <iframe :src="battleUrl" scrolling="no"></iframe>
+    </div>
   </div>
 </template>
 
@@ -36,15 +38,4 @@ iframe {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h2,
-iframe {
-  margin: 6px 8px;
-}
-
-.battle-viewer_menu {
-  padding: 0.5% 0%;
-  display: flex;
-  align-items: center;
-  align-content: center;
-}
 </style>

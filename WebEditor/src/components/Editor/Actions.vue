@@ -1,5 +1,5 @@
 <template>
-  <div class="editor_actions">
+  <div class="editor_actions actions">
     <md-button class="md-raised md-dense" @click="toBattle">Тестовый бой</md-button>
     <md-button class="md-raised md-dense">Отправить решение</md-button>
 
@@ -61,9 +61,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.editor_actions {
-  display: flex;
-  align-items: center;
-  align-content: center;
+.md-button {
+  margin: 6px 0px;
+  width: 100%;
 }
 </style>
