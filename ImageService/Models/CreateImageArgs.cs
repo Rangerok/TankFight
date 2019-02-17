@@ -2,7 +2,7 @@
 
 namespace ImageService.Models
 {
-  public class CreateArgs
+  public class CreateImageArgs
   {
     [JsonProperty("language")]
     public string Language { get; set; }

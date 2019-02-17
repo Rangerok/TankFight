@@ -23,16 +23,16 @@ namespace ImageService.Controllers
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> Create([FromBody]CreateArgs args)
+    public async Task<IActionResult> Create([FromBody]CreateImageArgs imageArgs)
     {
-      if (args == null)
+      if (imageArgs == null)
       {
         return this.BadRequest();
       }
      
       try
       {
-        var language = this.languageReader.Read(args.Language);
+        var language = this.languageReader.Read(imageArgs.Language);
 
         if (language == null)
         {
@@ -40,7 +40,7 @@ namespace ImageService.Controllers
           return BadRequest();
         }
 
-        var imageTag = await imageCreator.CreateImage(language, args.Code);
+        var imageTag = await imageCreator.CreateImage(language, imageArgs.Code);
 
         return this.Ok(new { Tag = imageTag });
       }
