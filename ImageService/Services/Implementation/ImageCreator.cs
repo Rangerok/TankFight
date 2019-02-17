@@ -34,7 +34,8 @@ namespace ImageService.Services.Implementation
       {
         using (var archiveStream = File.OpenRead(archive))
         {
-          var stream = await this.dockerClient.Images.BuildImageFromDockerfileAsync(archiveStream, new ImageBuildParameters { Tags = new List<string> { imageTag } });
+          var buildParams = new ImageBuildParameters {Tags = new List<string> {imageTag}, Remove = true, ForceRemove = true};
+          var stream = await this.dockerClient.Images.BuildImageFromDockerfileAsync(archiveStream, buildParams);
           await this.ReadToEnd(stream);
         }
       }
