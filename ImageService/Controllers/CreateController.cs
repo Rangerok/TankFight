@@ -40,9 +40,9 @@ namespace ImageService.Controllers
           return BadRequest();
         }
 
-        var imageTag = await imageCreator.CreateImage(language, imageArgs.Code);
+        var imageInfo = await imageCreator.CreateImage(language, imageArgs.Code);
 
-        return this.Ok(new { Tag = imageTag });
+        return this.Ok(imageInfo);
       }
       catch (Exception ex)
       {

@@ -5,6 +5,6 @@ namespace ImageService.Services.Interfaces
 {
   public interface IImageCreator
   {
-    Task<string> CreateImage(Language language, string code);
+    Task<ImageInfo> CreateImage(Language language, string code);
   }
 }

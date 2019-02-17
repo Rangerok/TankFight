@@ -17,7 +17,7 @@ namespace ImageService.Services.Implementation
     private readonly ICodeArchiver codeArchiver;
     private readonly ICodeSaver codeSaver;
 
-    public async Task<string> CreateImage(Language language, string code)
+    public async Task<ImageInfo> CreateImage(Language language, string code)
     {
       if (string.IsNullOrWhiteSpace(code))
       {
@@ -51,7 +51,7 @@ namespace ImageService.Services.Implementation
         throw new Exception($"Не удалось создать образ с именем {imageTag}");
       }
 
-      return imageTag;
+      return new ImageInfo { Tag = imageTag };
     }
 
     private async Task ReadToEnd(Stream stream)
