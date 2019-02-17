@@ -1,4 +1,4 @@
-# Поддерживаемые редактором языки (используется [CodeMirror](https://codemirror.net/doc/manual.html)):
+## Поддерживаемые редактором языки (используется [CodeMirror](https://codemirror.net/doc/manual.html)):
 
 - APL - text/apl
 - PGP - application/pgp
