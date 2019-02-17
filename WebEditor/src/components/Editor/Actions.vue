@@ -28,7 +28,7 @@ export default {
       this.$emit("battle-started");
       this.loading = true;
       axios
-        .post("/api/create", {
+        .post("/api/image", {
           language: this.LANGUAGE.id,
           code: this.CODE
         })

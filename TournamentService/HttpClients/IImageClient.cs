@@ -6,7 +6,7 @@ namespace TournamentService.HttpClients
 {
   internal interface IImageClient
   {
-    [Post("/api/create")]
+    [Post("/api/image")]
     Task<ImageInfo> Create([Body] CreateImageArgs args);
   }
 }

@@ -13,11 +13,11 @@ namespace ImageService.Controllers
   [Produces("application/json")]
   [Route("api/[controller]")]
   [ApiController]
-  public class CreateController : Controller
+  public class ImageController : Controller
   {
     private readonly IImageCreator imageCreator;
     private readonly ILanguageReader languageReader;
-    private readonly ILogger<CreateController> logger;
+    private readonly ILogger<ImageController> logger;
 
     [HttpPost]
     [ProducesResponseType(200)]
@@ -51,9 +51,9 @@ namespace ImageService.Controllers
       }
     }
 
-    public CreateController(IImageCreator imageCreator, 
+    public ImageController(IImageCreator imageCreator, 
       ILanguageReader languageReader, 
-      ILogger<CreateController> logger)
+      ILogger<ImageController> logger)
     {
       this.imageCreator = imageCreator;
       this.logger = logger;
