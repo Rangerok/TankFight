@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace ImageService.Models
+namespace TournamentService.Models
 {
   public class CreateImageArgs
   {
