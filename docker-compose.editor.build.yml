@@ -1,0 +1,73 @@
+version: '3'
+
+services:
+  storage:
+    depends_on:
+      - mongo
+    container_name: "storage"
+    image: vblz/tanks:storage
+    
+  image:
+    container_name: "image"
+    build:
+      context: .
+      dockerfile: ImageService/Dockerfile 
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    
+  fight:
+    image: vblz/tanks:fight
+    container_name: "fight"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - storage
+    environment:
+      - ContainerSettings__DontRemoveContainers=false
+      - BattleSettings__ContainersWarmSeconds=5
+
+  tournament:
+    container_name: "tournament"
+    build:
+      context: .
+      dockerfile: TournamentService/Dockerfile 
+    depends_on:
+      - storage
+      - fight
+      - image
+      
+  randombot:
+    image: vblz/tanks:randombot
+    entrypoint: /bin/true
+
+  rubot:
+    image: vblz/tanks:rubot
+    entrypoint: /bin/true
+
+  unity:
+    image: test-unity
+    container_name: "unity"
+    depends_on:
+      - storage
+      - fight
+      
+  editor:
+    container_name: "editor"
+    build:
+      context: ./WebEditor
+    ports:
+      - "5008:80"
+    depends_on:
+      - storage
+      - tournament
+      - fight
+      - image
+      - unity
+      
+  mongo:
+    image: mongo:3.4
+    volumes:
+      - mongo_volume:/data/db
+      
+volumes:
+  mongo_volume:
