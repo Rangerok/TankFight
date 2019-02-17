@@ -25,6 +25,7 @@ export default {
   methods: {
     toBattle() {
       //Отрефакторить, лучше сделать один вызов
+      this.$emit("battle-started");
       this.loading = true;
       axios
         .post("/api/create", {
@@ -47,10 +48,12 @@ export default {
             })
             .finally(() => {
               this.loading = false;
+              this.$emit("battle-ended");
             });
         })
         .catch(() => {
           this.loading = false;
+          this.$emit("battle-ended");
           this.error = "Не получилось создать образ";
           this.showError = true;
         });
