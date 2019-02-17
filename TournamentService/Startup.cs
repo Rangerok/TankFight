@@ -7,6 +7,9 @@ using MongoDB.Driver;
 using Refit;
 using Swashbuckle.AspNetCore.Swagger;
 using TournamentService.HttpClients;
+using TournamentService.Models;
+using TournamentService.Services.Implementations;
+using TournamentService.Services.Interfaces;
 
 namespace TournamentService
 {
@@ -28,12 +31,18 @@ namespace TournamentService
       var db = new MongoClient(this.Configuration["Mongo:Connection"])
         .GetDatabase(this.Configuration["Mongo:Database"]);
 
+      services
+        .AddSingleton(db.GetCollection<Bot>(this.Configuration["Mongo:TestBotsCollection"]))
+        .AddSingleton(db.GetCollection<User>(this.Configuration["Mongo:UsersCollection"]));
+
       var fightClient = RestService.For<IFightClient>(this.Configuration["Locations:FightServerLocation"]);
       var imageClient = RestService.For<IImageClient>(this.Configuration["Locations:ImageServiceLocation"]);
 
       services
         .AddSingleton(fightClient)
-        .AddSingleton(imageClient);
+        .AddSingleton(imageClient)
+        .AddSingleton<ITestBotsRepository, TestBotsRepository>()
+        .AddSingleton<ISubmitService, SubmitService>();
 
       services.AddMvc()
         .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

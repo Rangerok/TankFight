@@ -11,7 +11,7 @@
     <div v-if="code" class="editor_content content">
       <div class="editor_menu menu">
         <LanguageSelector @language-selected="onLanguageSelected"/>
-        <Actions @battle-started="onBattleStarted" @battle-ended="onBattleEnded"/>
+        <Actions @submit-started="onSubmitStarted" @submit-ended="onSubmitEnded"/>
       </div>
       <div class="main">
         <codemirror ref="cm" v-model="code" :options="cmOptions"></codemirror>
@@ -75,10 +75,10 @@ export default {
     onLanguageSelected() {
       this.$refs.cm.codemirror.setOption("mode", this.MODE);
     },
-    onBattleStarted() {
+    onSubmitStarted() {
       this.$refs.cm.codemirror.setOption("readOnly", true);
     },
-    onBattleEnded() {
+    onSubmitEnded() {
       this.$refs.cm.codemirror.setOption("readOnly", false);
     },
     ...mapActions(["SET_CODE", "SET_LANGUAGES"])

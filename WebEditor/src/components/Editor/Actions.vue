@@ -24,38 +24,23 @@ export default {
   },
   methods: {
     toBattle() {
-      //Отрефакторить, лучше сделать один вызов
-      this.$emit("battle-started");
+      this.$emit("submit-started");
       this.loading = true;
       axios
-        .post("/api/image", {
+        .post("/api/submit", {
           language: this.LANGUAGE.id,
           code: this.CODE
         })
-        .then(createResponse => {
-          this.loading = true;
-          axios
-            .post("/api/fight", [
-              createResponse.data.tag,
-              "vblz/tanks:randombot"
-            ])
-            .then(fightResponse => {
-              this.$router.push("/battle/" + fightResponse.data.battleId);
-            })
-            .catch(() => {
-              this.error = "Не получилось запустить бой";
-              this.showError = true;
-            })
-            .finally(() => {
-              this.loading = false;
-              this.$emit("battle-ended");
-            });
+        .then(submitResponse => {
+          this.$router.push("/battle/" + submitResponse.data);
         })
-        .catch(() => {
-          this.loading = false;
-          this.$emit("battle-ended");
-          this.error = "Не получилось создать образ";
+        .catch(err => {
+          this.error = err.response.data.error;
           this.showError = true;
+        })
+        .finally(() => {
+          this.loading = false;
+          this.$emit("submit-ended");
         });
     }
   }

@@ -4,9 +4,12 @@ using TournamentService.Models;
 
 namespace TournamentService.HttpClients
 {
-  internal interface IImageClient
+  public interface IImageClient
   {
     [Post("/api/image")]
-    Task<ImageInfo> Create([Body] CreateImageArgs args);
+    Task<ImageInfo> Create([Body] UserAnswer userAnswer);
+
+    [Delete("/api/image")]
+    Task Delete(string imageTag);
   }
 }

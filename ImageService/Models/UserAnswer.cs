@@ -2,7 +2,7 @@
 
 namespace ImageService.Models
 {
-  public class CreateImageArgs
+  public class UserAnswer
   {
     public string Language { get; set; }
     public string Code { get; set; }
