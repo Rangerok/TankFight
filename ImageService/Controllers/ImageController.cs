@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Docker.DotNet;
 using ImageService.Models;
 using ImageService.Settings;
 using ImageService.Services.Interfaces;
@@ -16,6 +17,7 @@ namespace ImageService.Controllers
   public class ImageController : Controller
   {
     private readonly IImageCreator imageCreator;
+    private readonly IImageRemover imageRemover;
     private readonly ILanguageReader languageReader;
     private readonly ILogger<ImageController> logger;
 
@@ -51,12 +53,43 @@ namespace ImageService.Controllers
       }
     }
 
+    [HttpDelete]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> Remove(string imageTag)
+    {
+      if (string.IsNullOrWhiteSpace(imageTag))
+      {
+        return BadRequest();
+      }
+
+      try
+      {
+        await this.imageRemover.RemoveImage(imageTag);
+        return Ok();
+      }
+      catch (DockerImageNotFoundException ex)
+      {
+        this.logger.LogWarning(ex, "Образ не найден.");
+        return NotFound();
+      }
+      catch (Exception ex)
+      {
+        this.logger.LogWarning(ex, "Образ не удален.");
+        return this.StatusCode((int)HttpStatusCode.InternalServerError);
+      }
+    }
+
     public ImageController(IImageCreator imageCreator, 
-      ILanguageReader languageReader, 
+      ILanguageReader languageReader,
+      IImageRemover imageRemover, 
       ILogger<ImageController> logger)
     {
       this.imageCreator = imageCreator;
       this.logger = logger;
+      this.imageRemover = imageRemover;
       this.languageReader = languageReader;
     }
   }
