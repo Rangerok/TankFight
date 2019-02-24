@@ -1,7 +1,9 @@
 ﻿using System;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace TournamentService.Models
 {
+  [BsonIgnoreExtraElements]
   public class Bot
   {
     public string Tag { get; set; }

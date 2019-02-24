@@ -1,5 +1,8 @@
-﻿namespace TournamentService.Models
+﻿using MongoDB.Bson.Serialization.Attributes;
+
+namespace TournamentService.Models
 {
+  [BsonIgnoreExtraElements]
   public class User
   {
     public string Name { get; set; }
