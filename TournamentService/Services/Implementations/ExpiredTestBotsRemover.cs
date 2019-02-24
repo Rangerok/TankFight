@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Refit;
 using TournamentService.HttpClients;
 using TournamentService.Services.Interfaces;
 
@@ -28,7 +30,16 @@ namespace TournamentService.Services.Implementations
 
           foreach (var expiredBot in expiredBots)
           {
-            await this.imageClient.Delete(expiredBot.Tag);
+            try
+            {
+              await this.imageClient.Delete(expiredBot.Tag);
+            }
+            catch (ApiException ex)
+            when(ex.StatusCode == HttpStatusCode.NotFound)
+            {
+              this.logger.LogInformation($"Бот {expiredBot.Tag} был удален ранее.");
+            }
+
             await this.testBotsRepository.Remove(expiredBot);
             this.logger.LogDebug($"Бот {expiredBot.Tag} удален.");
           }
