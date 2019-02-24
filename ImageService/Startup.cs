@@ -49,7 +49,6 @@ namespace ImageService
         .AddMvc()
         .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-      // Register the Swagger generator, defining 1 or more Swagger documents
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new Info { Title = "Image Service", Version = "v1" });
@@ -69,14 +68,11 @@ namespace ImageService
         .AllowAnyHeader()
         .AllowAnyMethod());
 
-      // Enable middleware to serve generated Swagger as a JSON endpoint.
       app.UseSwagger();
-
-      // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
-      // specifying the Swagger JSON endpoint.
       app.UseSwaggerUI(c =>
       {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Image Service V1");
+        c.RoutePrefix = string.Empty;
       });
 
       app.UseMvc();
