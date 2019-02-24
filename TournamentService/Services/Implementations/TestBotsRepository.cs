@@ -9,11 +9,19 @@ namespace TournamentService.Services.Implementations
 {
   public class TestBotsRepository : ITestBotsRepository
   {
+    private readonly TimeSpan botsLifeTimeInSeconds = TimeSpan.FromSeconds(120);
     private readonly IMongoCollection<Bot> bots;
 
-    public Task<Bot[]> GetAllExpired()
+    public async Task<Bot[]> GetAllExpired()
     {
-      throw new System.NotImplementedException();
+      var filter = Builders<Bot>
+        .Filter
+        .Lte(x => x.AddedAt, DateTime.UtcNow - this.botsLifeTimeInSeconds);
+
+      return (await this.bots
+        .Find(filter)
+        .ToListAsync())
+        .ToArray();
     }
 
     public Task Add(Bot bot)
@@ -36,7 +44,15 @@ namespace TournamentService.Services.Implementations
 
     public Task Remove(Bot bot)
     {
-      throw new System.NotImplementedException();
+      if (bot == null)
+      {
+        throw new ArgumentNullException(nameof(bot));
+      }
+
+      var filter = Builders<Bot>.Filter.Eq(x => x.Tag, bot.Tag);
+
+      return this.bots
+        .DeleteOneAsync(filter);
     }
 
     public TestBotsRepository(IMongoCollection<Bot> bots)

@@ -39,6 +39,7 @@ namespace TournamentService
       var imageClient = RestService.For<IImageClient>(this.Configuration["Locations:ImageServiceLocation"]);
 
       services
+        .AddHostedService<ExpiredTestBotsRemover>()
         .AddSingleton(fightClient)
         .AddSingleton(imageClient)
         .AddSingleton<ITestBotsRepository, TestBotsRepository>()
