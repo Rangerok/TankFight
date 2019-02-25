@@ -1,7 +1,7 @@
 <template>
   <div class="editor_actions actions">
-    <md-button class="md-raised md-dense" @click="toBattle">Тестовый бой</md-button>
-    <md-button class="md-raised md-dense">Отправить решение</md-button>
+    <md-button class="md-raised md-dense" :disabled="loading" @click="toBattle">Тестовый бой</md-button>
+    <md-button class="md-raised md-dense" :disabled="loading">Отправить решение</md-button>
 
     <md-progress-spinner v-if="loading" :md-diameter="20" :md-stroke="2" md-mode="indeterminate"></md-progress-spinner>
     <md-dialog-alert :md-active.sync="showError" :md-content="error" md-confirm-text="ОК"/>
@@ -35,7 +35,11 @@ export default {
           this.$router.push("/battle/" + submitResponse.data);
         })
         .catch(err => {
-          this.error = err.response.data.error;
+          if (err.response.data.error) {
+            this.error = err.response.data.error;
+          } else {
+            this.error = "Не удалось создать бота, попробуйте еще раз.";
+          }
           this.showError = true;
         })
         .finally(() => {
