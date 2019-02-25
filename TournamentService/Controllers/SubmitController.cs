@@ -32,22 +32,22 @@ namespace TournamentService.Controllers
       {
         var battleId = await this.submitService.SubmitTest(userAnswer);
 
-        return Ok(battleId);
+        return this.Ok(battleId);
       }
       catch (ImageNotCreatedException ex)
       {
         this.logger.LogWarning(ex, "Не удалось создать образ для тестового боя.");
-        return BadRequest(new {Error = "Не удалось создать образ, попробуйте еще раз."});
+        return this.BadRequest(new {Error = "Не удалось создать образ, попробуйте еще раз."});
       }
       catch (BattleNotStartedException ex)
       {
         this.logger.LogWarning(ex, "Не удалось запустить бой для тестового боя.");
-        return BadRequest(new {Error = "Не удалось запустить бой, попробуйте еще раз."});
+        return this.BadRequest(new {Error = "Не удалось запустить бой, попробуйте еще раз."});
       }
       catch (Exception ex)
       {
         this.logger.LogError(ex, "Не получилось запустить тестовый бой");
-        return StatusCode((int)HttpStatusCode.InternalServerError, new {Error = "Произошла ошибка, попробуйте еще раз."});
+        return this.StatusCode((int)HttpStatusCode.InternalServerError, new {Error = "Произошла ошибка, попробуйте еще раз."});
       }
     }
 
