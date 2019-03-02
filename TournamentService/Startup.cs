@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -45,6 +46,24 @@ namespace TournamentService
         .AddSingleton<ITestBotsRepository, TestBotsRepository>()
         .AddSingleton<ISubmitService, SubmitService>();
 
+
+      services.AddAuthentication(options =>
+        {
+          options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        })
+        .AddCookie(options =>
+        {
+          options.LoginPath = "/#/login";
+          options.LogoutPath = "/#/logout";
+        })
+        .AddGitHub(options =>
+        {
+          options.CallbackPath = "/auth/signin-github";
+          options.ClientId = this.Configuration["Github:ClientId"];
+          options.ClientSecret = this.Configuration["Github:ClientSecret"];
+          options.Scope.Add("user:email");
+        });
+
       services.AddMvc()
         .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -73,6 +92,10 @@ namespace TournamentService
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tournament Service API V1");
         c.RoutePrefix = string.Empty;
       });
+
+      app.UseStaticFiles();
+
+      app.UseAuthentication();
 
       app.UseMvc();
     }

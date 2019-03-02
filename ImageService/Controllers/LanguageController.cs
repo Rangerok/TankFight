@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Threading.Tasks;
 using ImageService.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

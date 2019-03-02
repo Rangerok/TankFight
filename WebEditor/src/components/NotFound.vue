@@ -1,6 +1,6 @@
 <template>
   <div class="not-found">
-    <h2>Страница не найдена</h2>
+    <md-empty-state md-label="Страница не найдена"></md-empty-state>
   </div>
 </template>
 

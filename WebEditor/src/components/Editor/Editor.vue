@@ -1,12 +1,12 @@
 <template>
   <div class="editor">
     <div v-if="loading" class="editor_loading">
-      <h2>Загрузка...
+      <md-empty-state>Загрузка...
         <md-progress-spinner :md-diameter="15" :md-stroke="2" md-mode="indeterminate"></md-progress-spinner>
-      </h2>
+      </md-empty-state>
     </div>
     <div v-if="error" class="editor_error">
-      <h2>{{ error }}</h2>
+      <md-empty-state :md-label="error"></md-empty-state>
     </div>
     <div v-if="code" class="editor_content content">
       <div class="editor_menu menu">
