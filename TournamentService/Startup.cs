@@ -1,6 +1,4 @@
-﻿using System.Net;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +37,7 @@ namespace TournamentService
         .AddSingleton(fightClient)
         .AddSingleton(imageClient)
         .AddSingleton<ITestBotsRepository, TestBotsRepository>()
+        .AddSingleton<IUserRepository, UserRepository>()
         .AddSingleton<ISubmitService, SubmitService>()
         .AddSingleton(db.GetCollection<Bot>(this.Configuration["Mongo:TestBotsCollection"]))
         .AddSingleton(db.GetCollection<User>(this.Configuration["Mongo:UsersCollection"]));
@@ -50,16 +49,9 @@ namespace TournamentService
         })
         .AddCookie(options =>
         {
-          options.Events.OnRedirectToLogin = (context) =>
-          {
-            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            return Task.CompletedTask;
-          };
-          options.Events.OnRedirectToAccessDenied = (context) =>
-          {
-            context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-            return Task.CompletedTask;
-          };
+          options.Events.OnRedirectToLogin += AuthenticationEventsHandlers.OnRedirectToLogin;
+          options.Events.OnRedirectToAccessDenied += AuthenticationEventsHandlers.OnRedirectToAccessDenied;
+          options.Events.OnSignedIn += AuthenticationEventsHandlers.OnSignedIn;
         })
         .AddGitHub(options =>
         {

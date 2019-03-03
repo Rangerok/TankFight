@@ -8,5 +8,6 @@ namespace TournamentService.Services.Interfaces
     Task<User> Get(string userName);
     Task Add(User user);
     Task AddBot(string userName, Bot bot);
+    Task<bool> UserExists(string userName);
   }
 }
