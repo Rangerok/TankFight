@@ -43,6 +43,7 @@ namespace TournamentService.Controllers
     }
 
     [HttpGet("signout")]
+    [Authorize]
     public IActionResult SignOut()
     {
       return this.SignOut(new AuthenticationProperties { RedirectUri = "/" },

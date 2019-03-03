@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TournamentService.Exceptions;
@@ -9,9 +10,10 @@ using TournamentService.Services.Interfaces;
 
 namespace TournamentService.Controllers
 {
+  [ApiController]
+  [Authorize]
   [Produces("application/json")]
   [Route("api/[controller]")]
-  [ApiController]
   public class SubmitController : Controller
   {
     private readonly ILogger<SubmitController> logger;

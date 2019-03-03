@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using System.Net;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -26,15 +28,8 @@ namespace TournamentService
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services
-        .AddCors();
-
       var db = new MongoClient(this.Configuration["Mongo:Connection"])
         .GetDatabase(this.Configuration["Mongo:Database"]);
-
-      services
-        .AddSingleton(db.GetCollection<Bot>(this.Configuration["Mongo:TestBotsCollection"]))
-        .AddSingleton(db.GetCollection<User>(this.Configuration["Mongo:UsersCollection"]));
 
       var fightClient = RestService.For<IFightClient>(this.Configuration["Locations:FightServerLocation"]);
       var imageClient = RestService.For<IImageClient>(this.Configuration["Locations:ImageServiceLocation"]);
@@ -44,7 +39,9 @@ namespace TournamentService
         .AddSingleton(fightClient)
         .AddSingleton(imageClient)
         .AddSingleton<ITestBotsRepository, TestBotsRepository>()
-        .AddSingleton<ISubmitService, SubmitService>();
+        .AddSingleton<ISubmitService, SubmitService>()
+        .AddSingleton(db.GetCollection<Bot>(this.Configuration["Mongo:TestBotsCollection"]))
+        .AddSingleton(db.GetCollection<User>(this.Configuration["Mongo:UsersCollection"]));
 
 
       services.AddAuthentication(options =>
@@ -53,8 +50,16 @@ namespace TournamentService
         })
         .AddCookie(options =>
         {
-          options.LoginPath = "/#/login";
-          options.LogoutPath = "/#/logout";
+          options.Events.OnRedirectToLogin = (context) =>
+          {
+            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            return Task.CompletedTask;
+          };
+          options.Events.OnRedirectToAccessDenied = (context) =>
+          {
+            context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+            return Task.CompletedTask;
+          };
         })
         .AddGitHub(options =>
         {
@@ -64,7 +69,9 @@ namespace TournamentService
           options.Scope.Add("user:email");
         });
 
-      services.AddMvc()
+      services
+        .AddCors()
+        .AddMvc()
         .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
       services.AddSwaggerGen(c =>
