@@ -36,6 +36,7 @@ namespace ImageService
         .Configure<RunnersSettings>(this.Configuration.GetSection("Runners"));
 
       services
+        .AddHostedService<DanglingImagesRemover>()
         .AddSingleton<IDockerClient>(dockerClient)
         .AddSingleton<ILanguageReader, LanguageReader>()
         .AddSingleton<IImageCreator, ImageCreator>()

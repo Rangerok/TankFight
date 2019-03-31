@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
 using ImageService.Exceptions;
-using ImageService.Models;
 using ImageService.Services.Interfaces;
 
 namespace ImageService.Services.Implementation
