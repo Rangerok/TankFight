@@ -1,8 +1,8 @@
 <template>
   <div class="editor">
     <div v-if="loading" class="editor_loading">
-      <md-empty-state>Загрузка...
-        <md-progress-spinner :md-diameter="15" :md-stroke="2" md-mode="indeterminate"></md-progress-spinner>
+      <md-empty-state md-label="Загрузка...">
+        <md-progress-spinner :md-diameter="20" :md-stroke="2" md-mode="indeterminate"></md-progress-spinner>
       </md-empty-state>
     </div>
     <div v-if="error" class="editor_error">
