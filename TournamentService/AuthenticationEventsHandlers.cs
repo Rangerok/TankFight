@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Mime;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AspNet.Security.OAuth.GitHub;
@@ -14,12 +15,16 @@ namespace TournamentService
   {
     public static Task OnRedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
     {
+      context.Response.Headers.Clear();
+      context.Response.ContentType = MediaTypeNames.Application.Json;
       context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
       return Task.CompletedTask;
     }
 
     public static Task OnRedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context)
     {
+      context.Response.Headers.Clear();
+      context.Response.ContentType = MediaTypeNames.Application.Json;
       context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
       return Task.CompletedTask;
     }
