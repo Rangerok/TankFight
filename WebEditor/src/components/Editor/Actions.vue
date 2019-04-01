@@ -32,7 +32,10 @@ export default {
           code: this.CODE
         })
         .then(submitResponse => {
-          this.$router.push("/battle/" + submitResponse.data);
+          this.$router.push({
+            path: "/battle",
+            query: { battleId: submitResponse.data }
+          });
         })
         .catch(err => {
           if (err.response.data.error) {

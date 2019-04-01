@@ -4,26 +4,30 @@
       <Actions/>
     </div>
     <div class="main">
-      <iframe :src="battleUrl" scrolling="no"></iframe>
+      <unity
+        src="../../unity/Build/Build.json"
+        width="960"
+        height="600"
+        unityLoader="../../unity/Build/UnityLoader.js"
+        hideFooter="true"
+        ref="gameInstance"
+      ></unity>
     </div>
   </div>
 </template>
 
 <script>
+import Unity from "vue-unity-webgl";
 import Actions from "./Actions.vue";
 
 export default {
   name: "BattleViewer",
   components: {
+    Unity,
     Actions
   },
   props: {
-    id: String
-  },
-  computed: {
-    battleUrl: function() {
-      return "/view-battle/?battleId=" + this.id;
-    }
+    battleId: String
   }
 };
 </script>

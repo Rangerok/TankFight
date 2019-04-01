@@ -44,13 +44,6 @@ services:
     image: vblz/tanks:rubot
     entrypoint: /bin/true
 
-  unity:
-    image: test-unity
-    container_name: "unity"
-    depends_on:
-      - storage
-      - fight
-      
   editor:
     container_name: "editor"
     build:
@@ -62,7 +55,6 @@ services:
       - tournament
       - fight
       - image
-      - unity
       
   mongo:
     image: mongo:3.4

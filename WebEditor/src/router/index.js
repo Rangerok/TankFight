@@ -1,9 +1,10 @@
 import VueRouter from "vue-router";
 import auth from "../auth";
-import Editor from "../components/Editor/Editor.vue";
-import BattleViewer from "../components/BattleViewer/BattleViewer.vue";
-import Login from "../components/Login.vue";
-import NotFound from "../components/NotFound.vue";
+const Editor = () => import("../components/Editor/Editor.vue");
+const Login = () => import("../components/Login.vue");
+const NotFound = () => import("../components/NotFound.vue");
+const BattleViewer = () =>
+  import("../components/BattleViewer/BattleViewer.vue");
 
 function requireAuth(to, from, next) {
   auth
@@ -24,9 +25,9 @@ export const router = new VueRouter({
     { path: "/", component: Editor, beforeEnter: requireAuth },
     { path: "/login", component: Login },
     {
-      path: "/battle/:id",
+      path: "/battle",
       component: BattleViewer,
-      props: true,
+      props: route => ({ battleId: route.query.battleId }),
       beforeEnter: requireAuth
     },
     {
