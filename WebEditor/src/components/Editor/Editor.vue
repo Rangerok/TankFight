@@ -1,22 +1,18 @@
 <template>
   <div class="editor">
-    <div v-if="loading" class="editor_loading">
-      <md-empty-state md-label="Загрузка...">
-        <md-progress-spinner :md-diameter="20" :md-stroke="2" md-mode="indeterminate"></md-progress-spinner>
-      </md-empty-state>
-    </div>
-    <div v-if="error" class="editor_error">
-      <md-empty-state :md-label="error"></md-empty-state>
-    </div>
     <div v-if="code" class="editor_content content">
       <div class="editor_menu menu">
         <LanguageSelector @language-selected="onLanguageSelected"/>
         <Actions @submit-started="onSubmitStarted" @submit-ended="onSubmitEnded"/>
       </div>
-      <div class="main">
+      <div class="editor_main main">
         <codemirror ref="cm" v-model="code" :options="cmOptions"></codemirror>
       </div>
     </div>
+    <md-empty-state v-if="loading" md-label="Загрузка...">
+      <md-progress-spinner :md-diameter="20" :md-stroke="2" md-mode="indeterminate"></md-progress-spinner>
+    </md-empty-state>
+    <md-empty-state v-if="error" :md-label="error"></md-empty-state>
   </div>
 </template>
 

@@ -1,15 +1,19 @@
 <template>
   <div class="battle-viewer content">
     <div class="battle-viewer_menu menu">
-      <Actions/>
+      <Actions
+        @start-stop-clicked="startStopPlaying"
+        @next-clicked="nextFrame"
+        @previous-clicked="previousFrame"
+      />
     </div>
-    <div class="main">
+    <div class="battle-viewer_main main">
       <unity
         src="../../unity/Build/Build.json"
         width="960"
         height="600"
         unityLoader="../../unity/Build/UnityLoader.js"
-        hideFooter="true"
+        :hideFooter="hideFooter"
         ref="gameInstance"
       ></unity>
     </div>
@@ -26,8 +30,24 @@ export default {
     Unity,
     Actions
   },
+  data() {
+    return {
+      hideFooter: true
+    };
+  },
   props: {
     battleId: String
+  },
+  methods: {
+    startStopPlaying() {
+      this.$refs.gameInstance.message("Main Camera", "StartStopPlaying", null);
+    },
+    nextFrame() {
+      this.$refs.gameInstance.message("Main Camera", "GoToNextFrame", null);
+    },
+    previousFrame() {
+      this.$refs.gameInstance.message("Main Camera", "GoToPreviousFrame", null);
+    }
   }
 };
 </script>

@@ -1,6 +1,17 @@
 <template>
   <div class="battle-viewer_actions actions">
-    <md-button class="md-raised md-dense" @click="toEditor">Назад</md-button>
+    <div>
+      <md-button class="md-raised" @click="previousClicked">
+        <md-icon>skip_previous</md-icon>
+      </md-button>
+      <md-button class="md-raised" @click="startStopClicked">
+        <md-icon>play_circle_filled</md-icon>
+      </md-button>
+      <md-button class="md-raised" @click="nextClicked">
+        <md-icon>skip_next</md-icon>
+      </md-button>
+    </div>
+    <md-button class="md-raised" @click="toEditor">Назад</md-button>
   </div>
 </template>
 
@@ -10,6 +21,15 @@ export default {
   methods: {
     toEditor() {
       this.$router.push("/");
+    },
+    startStopClicked() {
+      this.$emit("start-stop-clicked");
+    },
+    nextClicked() {
+      this.$emit("next-clicked");
+    },
+    previousClicked() {
+      this.$emit("previous-clicked");
     }
   }
 };
@@ -17,8 +37,4 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.md-button {
-  margin: 6px 0px;
-  width: 100%;
-}
 </style>

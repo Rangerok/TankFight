@@ -22,26 +22,29 @@ export default {
   margin: 6px 8px;
   padding: 0.5% 0%;
   display: flex;
-  align-items: stretch;
-  align-content: center;
+  flex-direction: row;
 }
 
 .menu {
-  width: 15%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  align-content: center;
+  flex-basis: 15%;
 }
 
 .main {
   text-align: left;
   margin-left: 2.5%;
+  flex-basis: 80%;
 }
 
-.actions,
-.main {
-  width: 100%;
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  align-content: stretch;
+}
+
+.md-button {
+  margin-left: 0px;
+  margin-right: 0px;
 }
 
 #app {

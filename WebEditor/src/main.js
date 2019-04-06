@@ -10,6 +10,7 @@ Vue.config.productionTip = false;
 import VueMaterial from "vue-material";
 import "vue-material/dist/vue-material.min.css";
 import "vue-material/dist/theme/default.css";
+import "material-design-icons/iconfont/material-icons.css";
 
 Vue.component("v-select", vSelect);
 Vue.use(VueRouter);

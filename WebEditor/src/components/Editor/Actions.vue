@@ -1,9 +1,10 @@
 <template>
   <div class="editor_actions actions">
-    <md-button class="md-raised md-dense" :disabled="loading" @click="toBattle">Тестовый бой</md-button>
-    <md-button class="md-raised md-dense" :disabled="loading">Отправить решение</md-button>
-
-    <md-progress-spinner v-if="loading" :md-diameter="20" :md-stroke="2" md-mode="indeterminate"></md-progress-spinner>
+    <md-button class="md-raised" :disabled="loading" @click="toBattle">Тестовый бой</md-button>
+    <md-button class="md-raised" :disabled="loading">Отправить решение</md-button>
+    <div>
+      <md-progress-spinner v-if="loading" :md-diameter="20" :md-stroke="2" md-mode="indeterminate"></md-progress-spinner>
+    </div>
     <md-dialog-alert :md-active.sync="showError" :md-content="error" md-confirm-text="ОК"/>
   </div>
 </template>
@@ -56,8 +57,4 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.md-button {
-  margin: 6px 0px;
-  width: 100%;
-}
 </style>
