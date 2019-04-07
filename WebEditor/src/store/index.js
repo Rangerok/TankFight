@@ -7,7 +7,8 @@ export const store = new Vuex.Store({
   state: {
     languages: [],
     selectedLanguage: {},
-    code: null
+    code: null,
+    botOutput: []
   },
   getters: {
     LANGUAGES: state => {
@@ -24,6 +25,9 @@ export const store = new Vuex.Store({
         return state.selectedLanguage.template;
       }
       return state.code;
+    },
+    BOT_OUTPUT: state => {
+      return state.botOutput;
     }
   },
   mutations: {
@@ -37,6 +41,9 @@ export const store = new Vuex.Store({
     },
     SET_CODE: (state, value) => {
       state.code = value;
+    },
+    SET_BOT_OUTPUT: (state, value) => {
+      state.botOutput = value;
     }
   },
   actions: {
@@ -50,6 +57,9 @@ export const store = new Vuex.Store({
     },
     SET_CODE: (context, value) => {
       context.commit("SET_CODE", value);
+    },
+    SET_BOT_OUTPUT: (context, value) => {
+      context.commit("SET_BOT_OUTPUT", value);
     }
   },
   modules: {}

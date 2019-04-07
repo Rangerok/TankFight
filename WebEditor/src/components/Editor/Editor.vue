@@ -102,4 +102,7 @@ export default {
 </style>
 
 <style scoped>
+.vue-codemirror {
+  flex-grow: 1;
+}
 </style>

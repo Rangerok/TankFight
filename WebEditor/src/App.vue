@@ -33,6 +33,7 @@ export default {
   text-align: left;
   margin-left: 2.5%;
   flex-basis: 80%;
+  display: flex;
 }
 
 .actions {
