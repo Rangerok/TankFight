@@ -25,7 +25,6 @@ export default {
   },
   methods: {
     toBattle() {
-      this.$emit("submit-started");
       this.loading = true;
       axios
         .post("/api/submit", {
@@ -48,7 +47,6 @@ export default {
         })
         .finally(() => {
           this.loading = false;
-          this.$emit("submit-ended");
         });
     }
   }
