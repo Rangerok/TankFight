@@ -42,9 +42,15 @@ export default {
   align-content: stretch;
 }
 
+.actions > div,
+.actions > .md-button,
+.language-selector {
+  margin: 0px 0px 8px 0px;
+}
+
 .md-button {
-  margin-left: 0px;
-  margin-right: 0px;
+  margin: 0px;
+  flex-grow: 1;
 }
 
 #app {

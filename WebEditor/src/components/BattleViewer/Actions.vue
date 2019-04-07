@@ -1,6 +1,6 @@
 <template>
   <div class="battle-viewer_actions actions">
-    <div>
+    <div class="battle-viewer_playing-menu">
       <md-button class="md-raised" @click="previousClicked">
         <md-icon>skip_previous</md-icon>
       </md-button>
@@ -37,4 +37,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.battle-viewer_playing-menu {
+  display: flex;
+  flex-direction: row;
+}
 </style>
