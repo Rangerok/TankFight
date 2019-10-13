@@ -11,6 +11,7 @@ using TournamentService.HttpClients;
 using TournamentService.Models;
 using TournamentService.Services.Implementations;
 using TournamentService.Services.Interfaces;
+using TournamentService.Settings;
 
 namespace TournamentService
 {
@@ -62,6 +63,7 @@ namespace TournamentService
         });
 
       services
+        .Configure<SubmitSettings>(this.Configuration.GetSection("SubmitSettings"))
         .Configure<ApiBehaviorOptions>(options =>
           {
             options.InvalidModelStateResponseFactory = InvalidModelStateResponseFactory.ReturnErrorResponse;

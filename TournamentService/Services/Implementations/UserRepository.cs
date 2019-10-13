@@ -60,6 +60,20 @@ namespace TournamentService.Services.Implementations
         );
     }
 
+    public async Task<int> GetBotsCount(string userName)
+    {
+      if (string.IsNullOrWhiteSpace(userName))
+      {
+        throw new ArgumentException($"Invalid {userName}", nameof(userName));
+      }
+
+      return (await this.users
+        .Find(x => x.Name == userName)
+        .SingleAsync())
+        .Bots
+        .Length;
+    }
+
     public async Task<bool> UserExists(string userName)
     {
       if (string.IsNullOrWhiteSpace(userName))

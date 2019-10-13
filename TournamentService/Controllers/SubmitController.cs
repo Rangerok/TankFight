@@ -18,6 +18,55 @@ namespace TournamentService.Controllers
   {
     private readonly ILogger<SubmitController> logger;
     private readonly ISubmitService submitService;
+    private readonly IUserRepository userRepository;
+
+    [HttpGet]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> GetSubmitted()
+    {
+      try
+      {
+        var user = await this.userRepository.Get(this.User.Identity.Name);
+
+        return this.Ok(user.Bots);
+      }
+      catch (Exception ex)
+      {
+        this.logger.LogError(ex, "Не получилось запросить всех ботов пользователя.");
+        return this.StatusCode((int)HttpStatusCode.InternalServerError, new ErrorResponse("Произошла ошибка, попробуйте еще раз."));
+      }
+    }
+
+    [HttpPost]
+    [RequestSizeLimit(1024 * 100)]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> Submit([FromBody] NamedUserAnswer userAnswer)
+    {
+      try
+      {
+        await this.submitService.Submit(this.User.Identity.Name, userAnswer);
+
+        return this.Ok();
+      }
+      catch (ImageNotCreatedException ex)
+      {
+        this.logger.LogWarning(ex, "Не удалось создать образ.");
+        return this.BadRequest(new ErrorResponse("Не удалось создать образ, попробуйте еще раз."));
+      }
+      catch (BotsCountExceededException ex)
+      {
+        this.logger.LogWarning(ex, "Превышен лимит на количество ботов.");
+        return this.BadRequest(new ErrorResponse("Превышен лимит на количество ботов."));
+      }
+      catch (Exception ex)
+      {
+        this.logger.LogError(ex, "Не получилось отправить решение.");
+        return this.StatusCode((int)HttpStatusCode.InternalServerError, new ErrorResponse("Произошла ошибка, попробуйте еще раз."));
+      }
+    }
 
     [HttpPost]
     [RequestSizeLimit(1024 * 100)]
@@ -26,11 +75,6 @@ namespace TournamentService.Controllers
     [ProducesResponseType(500)]
     public async Task<IActionResult> SubmitTest([FromBody] UserAnswer userAnswer)
     {
-      if (userAnswer == null)
-      {
-        return this.BadRequest();
-      }
-
       try
       {
         var battleId = await this.submitService.SubmitTest(userAnswer);
@@ -55,10 +99,12 @@ namespace TournamentService.Controllers
     }
 
     public SubmitController(ISubmitService submitService, 
-      ILogger<SubmitController> logger)
+      ILogger<SubmitController> logger,
+      IUserRepository userRepository)
     {
       this.submitService = submitService;
       this.logger = logger;
+      this.userRepository = userRepository;
     }
   }
 }

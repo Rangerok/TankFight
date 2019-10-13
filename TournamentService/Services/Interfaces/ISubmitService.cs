@@ -5,7 +5,7 @@ namespace TournamentService.Services.Interfaces
 {
   public interface ISubmitService
   {
-    Task Submit(string userName, UserAnswer userAnswer);
+    Task Submit(string userName, NamedUserAnswer userAnswer);
     Task<string> SubmitTest(UserAnswer userAnswer);
   }
 }
