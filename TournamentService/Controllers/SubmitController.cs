@@ -20,6 +20,7 @@ namespace TournamentService.Controllers
     private readonly ISubmitService submitService;
 
     [HttpPost]
+    [RequestSizeLimit(1024 * 100)]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
@@ -39,17 +40,17 @@ namespace TournamentService.Controllers
       catch (ImageNotCreatedException ex)
       {
         this.logger.LogWarning(ex, "Не удалось создать образ для тестового боя.");
-        return this.BadRequest(new {Error = "Не удалось создать образ, попробуйте еще раз."});
+        return this.BadRequest(new ErrorResponse("Не удалось создать образ, попробуйте еще раз."));
       }
       catch (BattleNotStartedException ex)
       {
         this.logger.LogWarning(ex, "Не удалось запустить бой для тестового боя.");
-        return this.BadRequest(new {Error = "Не удалось запустить бой, попробуйте еще раз."});
+        return this.BadRequest(new ErrorResponse("Не удалось запустить бой, попробуйте еще раз."));
       }
       catch (Exception ex)
       {
         this.logger.LogError(ex, "Не получилось запустить тестовый бой");
-        return this.StatusCode((int)HttpStatusCode.InternalServerError, new {Error = "Произошла ошибка, попробуйте еще раз."});
+        return this.StatusCode((int)HttpStatusCode.InternalServerError, new ErrorResponse("Произошла ошибка, попробуйте еще раз."));
       }
     }
 

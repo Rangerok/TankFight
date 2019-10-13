@@ -18,7 +18,7 @@ namespace TournamentService
   {
     public Startup(IConfiguration configuration)
     {
-      Configuration = configuration;
+      this.Configuration = configuration;
     }
 
     public IConfiguration Configuration { get; }
@@ -60,6 +60,12 @@ namespace TournamentService
           options.ClientSecret = this.Configuration["Github:ClientSecret"];
           options.Scope.Add("user:email");
         });
+
+      services
+        .Configure<ApiBehaviorOptions>(options =>
+          {
+            options.InvalidModelStateResponseFactory = InvalidModelStateResponseFactory.ReturnErrorResponse;
+          });
 
       services
         .AddCors()

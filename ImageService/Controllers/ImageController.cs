@@ -3,11 +3,9 @@ using System.Net;
 using System.Threading.Tasks;
 using Docker.DotNet;
 using ImageService.Models;
-using ImageService.Settings;
 using ImageService.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace ImageService.Controllers
 {
@@ -39,10 +37,10 @@ namespace ImageService.Controllers
         if (language == null)
         {
           this.logger.LogWarning("Запрос с неизвестным языком.");
-          return BadRequest();
+          return this.BadRequest();
         }
 
-        var imageInfo = await imageCreator.CreateImage(language, userAnswer.Code);
+        var imageInfo = await this.imageCreator.CreateImage(language, userAnswer.Code);
 
         return this.Ok(imageInfo);
       }
@@ -62,7 +60,7 @@ namespace ImageService.Controllers
     {
       if (string.IsNullOrWhiteSpace(imageTag))
       {
-        return BadRequest();
+        return this.BadRequest();
       }
 
       try
@@ -73,7 +71,7 @@ namespace ImageService.Controllers
       catch (DockerImageNotFoundException ex)
       {
         this.logger.LogWarning(ex, "Образ не найден.");
-        return NotFound();
+        return this.NotFound();
       }
       catch (Exception ex)
       {

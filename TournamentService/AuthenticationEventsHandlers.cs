@@ -11,7 +11,7 @@ using TournamentService.Services.Interfaces;
 
 namespace TournamentService
 {
-  public class AuthenticationEventsHandlers
+  public static class AuthenticationEventsHandlers
   {
     public static Task OnRedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
     {
