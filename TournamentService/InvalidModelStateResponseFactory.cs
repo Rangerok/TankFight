@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using TournamentService.Models;
+using TournamentService.Models.Responses;
 
 namespace TournamentService
 {

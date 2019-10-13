@@ -1,4 +1,4 @@
-﻿namespace TournamentService.Models
+﻿namespace TournamentService.Models.Responses
 {
   public class ErrorResponse
   {

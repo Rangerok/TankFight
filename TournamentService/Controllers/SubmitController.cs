@@ -4,9 +4,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using TournamentService.Exceptions;
 using TournamentService.Models;
+using TournamentService.Models.Responses;
 using TournamentService.Services.Interfaces;
+using TournamentService.Settings;
 
 namespace TournamentService.Controllers
 {
@@ -20,6 +23,8 @@ namespace TournamentService.Controllers
     private readonly ISubmitService submitService;
     private readonly IUserRepository userRepository;
 
+    private readonly SubmitSettings submitSettings;
+
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
@@ -29,7 +34,11 @@ namespace TournamentService.Controllers
       {
         var user = await this.userRepository.Get(this.User.Identity.Name);
 
-        return this.Ok(user.Bots);
+        return this.Ok(new BotsResponse
+        {
+          Bots = user.Bots,
+          MaxBotsCount = this.submitSettings.MaxBotsCount
+        });
       }
       catch (Exception ex)
       {
@@ -98,13 +107,33 @@ namespace TournamentService.Controllers
       }
     }
 
+    [HttpDelete]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> RemoveBot(string botName)
+    {
+      try
+      {
+        await this.userRepository.RemoveBot(this.User.Identity.Name, botName);
+
+        return this.Ok();
+      }
+      catch (Exception ex)
+      {
+        this.logger.LogError(ex, "Не получилось удалить бота {bot}.", botName);
+        return this.StatusCode((int)HttpStatusCode.InternalServerError, new ErrorResponse("Не получилось удалить бота, попробуйте еще раз."));
+      }
+    }
+
     public SubmitController(ISubmitService submitService, 
       ILogger<SubmitController> logger,
-      IUserRepository userRepository)
+      IUserRepository userRepository, 
+      IOptions<SubmitSettings> submitSettings)
     {
       this.submitService = submitService;
       this.logger = logger;
       this.userRepository = userRepository;
+      this.submitSettings = submitSettings.Value;
     }
   }
 }
