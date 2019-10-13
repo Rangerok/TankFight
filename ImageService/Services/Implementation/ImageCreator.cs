@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Docker.DotNet;
 using Docker.DotNet.Models;
+using ImageService.Exceptions;
 using ImageService.Models;
 using ImageService.Services.Interfaces;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ImageService.Services.Implementation
 {
@@ -13,9 +17,12 @@ namespace ImageService.Services.Implementation
   {
     private const string ImageTagFormat = "tankfight:{0}-{1}";
 
+    private readonly ILogger<ImageCreator> logger;
     private readonly IDockerClient dockerClient;
     private readonly ICodeArchiver codeArchiver;
     private readonly ICodeSaver codeSaver;
+
+    private readonly TimeSpan maxBuildTime = TimeSpan.FromSeconds(60);
 
     public async Task<ImageInfo> CreateImage(Language language, string code)
     {
@@ -34,9 +41,25 @@ namespace ImageService.Services.Implementation
       {
         using (var archiveStream = File.OpenRead(archive))
         {
-          var buildParams = new ImageBuildParameters {Tags = new List<string> {imageTag}, Remove = true, ForceRemove = true};
-          var stream = await this.dockerClient.Images.BuildImageFromDockerfileAsync(archiveStream, buildParams);
-          await this.ReadToEnd(stream);
+          var cts = new CancellationTokenSource(this.maxBuildTime);
+
+          var buildParams = new ImageBuildParameters
+          {
+            Tags = new List<string> {imageTag},
+            Remove = true,
+            ForceRemove = true
+          };
+
+          var stream = await this.dockerClient.Images.BuildImageFromDockerfileAsync(archiveStream, buildParams, cts.Token);
+
+          await Task.WhenAny(this.ReadToEnd(stream, imageTag, cts.Token), Task.Delay(this.maxBuildTime));
+
+          if (cts.IsCancellationRequested)
+          {
+            throw new BuildImageException($"Не удалось создать образ с именем {imageTag} за выделенное время");
+          }
+
+          return new ImageInfo { Tag = imageTag };
         }
       }
       finally
@@ -44,34 +67,35 @@ namespace ImageService.Services.Implementation
         File.Delete(archive);
         Directory.Delete(solutionPath, true);
       }
-
-      var result = await this.dockerClient.Images.SearchImagesAsync(new ImagesSearchParameters { Term = imageTag });
-
-      if (result.Count == 0)
-      {
-        throw new Exception($"Не удалось создать образ с именем {imageTag}");
-      }
-
-      return new ImageInfo { Tag = imageTag };
     }
 
-    private async Task ReadToEnd(Stream stream)
+    private async Task ReadToEnd(Stream stream, string imageTag, CancellationToken cts)
     {
-      var buffer = new byte[128];
-      var len = await stream.ReadAsync(buffer, 0, 128);
-      while (len > 0)
+      var reader = new StreamReader(stream);
+
+      while (!reader.EndOfStream && !cts.IsCancellationRequested)
       {
-        len = await stream.ReadAsync(buffer, 0, 128);
+        var jsonMessage = JsonConvert.DeserializeObject<JSONMessage>(await reader.ReadLineAsync());
+
+        this.logger.LogDebug("Событие сборки {json} образа {imageTag}", jsonMessage.Stream, imageTag);
+
+        if (!string.IsNullOrWhiteSpace(jsonMessage.ErrorMessage))
+        {
+          this.logger.LogError("Ошибка сборки {error} образа {imageTag}", jsonMessage.ErrorMessage, imageTag);
+          throw new BuildImageException($"Не удалось создать образ {imageTag}, ошибка {jsonMessage.ErrorMessage}");
+        }
       }
     }
 
     public ImageCreator(IDockerClient dockerClient, 
       ICodeArchiver codeArchiver, 
-      ICodeSaver codeSaver)
+      ICodeSaver codeSaver, 
+      ILogger<ImageCreator> logger)
     {
       this.dockerClient = dockerClient;
       this.codeArchiver = codeArchiver;
       this.codeSaver = codeSaver;
+      this.logger = logger;
     }
   }
 }
